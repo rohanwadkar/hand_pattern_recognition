@@ -1,0 +1,4 @@
+string filter_color
+---
+bool success
+ur5e_desk_interfaces/DetectedObject[] objects
