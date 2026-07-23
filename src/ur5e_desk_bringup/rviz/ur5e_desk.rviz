@@ -1,37 +1,98 @@
 Panels:
-  - Class: rviz_default_plugins/Displays
+  - Class: rviz_common/Displays
     Name: Displays
-  - Class: rviz_default_plugins/Views
+    Property Tree Widget:
+      Expanded:
+        - /Motion Planning1
+      Splitter Ratio: 0.55
+  - Class: rviz_common/Help
+    Name: Help
+  - Class: rviz_common/Views
     Name: Views
 Visualization Manager:
-  Class: ""
   Displays:
-    - Class: rviz_default_plugins/Grid
-      Name: Grid
+    - Alpha: 0.45
+      Cell Size: 0.25
+      Class: rviz_default_plugins/Grid
+      Color: 90; 95; 105
+      Name: Desk Grid
+      Plane Cell Count: 20
+      Reference Frame: world
       Value: true
-    - Class: rviz_default_plugins/RobotModel
-      Name: RobotModel
+    - Class: moveit_rviz_plugin/MotionPlanning
+      Enabled: true
+      Move Group Namespace: ""
+      MoveIt_Allow_Approximate_IK: false
+      MoveIt_Allow_Replanning: true
+      MoveIt_Planning_Attempts: 10
+      MoveIt_Planning_Time: 5
+      Name: Motion Planning
+      Planned Path:
+        Loop Animation: false
+        Robot Alpha: 0.65
+        Show Robot Collision: false
+        Show Robot Visual: true
+        Show Trail: true
+        State Display Time: 0.05 s
+        Trajectory Topic: /display_planned_path
+      Planning Request:
+        Goal State Alpha: 1
+        Goal State Color: 250; 128; 0
+        Interactive Marker Size: 0.25
+        Planning Group: ur_manipulator
+        Query Goal State: true
+        Query Start State: false
+        Start State Alpha: 1
+        Start State Color: 0; 255; 0
+      Planning Scene Topic: /monitored_planning_scene
       Robot Description: robot_description
+      Scene Geometry:
+        Scene Alpha: 0.18
+        Show Scene Geometry: true
+      Scene Robot:
+        Robot Alpha: 1
+        Show Robot Collision: false
+        Show Robot Visual: true
       Value: true
+      Velocity_Scaling_Factor: 0.25
+      Acceleration_Scaling_Factor: 0.25
     - Class: rviz_default_plugins/TF
-      Name: TF
-      Value: true
-    - Class: rviz_default_plugins/Image
-      Name: RGB Camera View
-      Topic: /camera/image_raw
-      Value: true
-    - Class: rviz_default_plugins/PointCloud2
-      Name: Desk Point Cloud
-      Topic: /camera/points
-      Value: true
+      Enabled: false
+      Frame Timeout: 15
+      Marker Scale: 0.15
+      Name: TF Frames
+      Show Arrows: true
+      Show Axes: true
+      Show Names: false
+      Value: false
   Global Options:
+    Background Color: 32; 36; 44
     Fixed Frame: world
     Frame Rate: 30
   Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+  Value: true
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 3.0
-      Focal Point: [0.0, 0.25, 0.5]
-      Pitch: 0.5
+      Distance: 2.8
+      Focal Point:
+        X: 0
+        Y: -0.15
+        Z: 0.75
+      Name: Desk Overview
+      Pitch: 0.45
+      Target Frame: world
+      Value: Orbit (rviz_default_plugins)
       Yaw: 0.8
+Window Geometry:
+  Height: 1000
+  Width: 1200
+  X: 680
+  Y: 40

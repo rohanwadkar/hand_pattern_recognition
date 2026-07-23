@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import time
+import threading
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
@@ -43,16 +44,21 @@ class TaskManagerNode(Node):
             self.get_logger().warn(f"System is busy ({self.state}). Ignoring command '{cmd}'.")
             return
 
-        self.get_logger().info(f"Received gesture command: '{cmd}'. Executing workflow...")
-
-        if cmd == "pick_and_place":
-            self.execute_task_1()
-        elif cmd == "sort_by_color":
-            self.execute_task_2()
-        elif cmd == "stack_objects":
-            self.execute_task_3()
-        else:
+        tasks = {
+            "pick_and_place": self.execute_task_1,
+            "sort_by_color": self.execute_task_2,
+            "stack_objects": self.execute_task_3,
+        }
+        task = tasks.get(cmd)
+        if task is None:
             self.get_logger().error(f"Unknown gesture command '{cmd}'.")
+            return
+
+        # Service waits and the simulated execution sleeps must not block the
+        # executor thread that delivers service responses and new ROS events.
+        self.state = "PERCEIVING"
+        self.get_logger().info(f"Received gesture command: '{cmd}'. Executing workflow...")
+        threading.Thread(target=task, daemon=True).start()
 
     def call_detect_objects(self, color_filter="all"):
         if not self.detect_cli.wait_for_service(timeout_sec=3.0):
@@ -62,7 +68,11 @@ class TaskManagerNode(Node):
         req = DetectObjects.Request()
         req.filter_color = color_filter
         future = self.detect_cli.call_async(req)
-        rclpy.spin_until_future_complete(self, future)
+        completed = threading.Event()
+        future.add_done_callback(lambda _: completed.set())
+        if not completed.wait(timeout=5.0):
+            self.get_logger().error("Vision perception service timed out.")
+            return []
         res = future.result()
         if res and res.success:
             return res.objects

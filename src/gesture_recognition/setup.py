@@ -13,7 +13,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],
-    zip_safe=true,
+    zip_safe=True,
     maintainer='ROS Developer',
     maintainer_email='user@todo.todo',
     description='MediaPipe & OpenCV gesture recognition node for ROS 2',

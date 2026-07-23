@@ -1,10 +1,21 @@
-FROM ros:jazzy-ros-base
+FROM osrf/ros:jazzy-desktop-full
+
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ROS_DISTRO=jazzy
 
+# ROS binary packages are updated independently. Bump this value when rebuilding
+# so Docker does not reuse stale apt metadata with newer, ABI-incompatible packages.
+ARG ROS_APT_CACHE_BUST=2026-07-24-2
+
 # Install system dependencies, Gazebo Harmonic, MoveIt 2, OpenCV, and Build tools
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN echo "Refreshing ROS apt metadata: ${ROS_APT_CACHE_BUST}" \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get update \
+    # The ROS base image and packages.ros.org can be from different syncs.
+    # Upgrade the base as one unit before adding packages to avoid C++ ABI skew.
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
     git \
@@ -42,10 +53,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python ML/Computer Vision libraries
-RUN pip install --no-cache-dir --break-system-packages \
+# Keep the Debian/ROS-provided numpy (1.26.x): --ignore-installed avoids pip
+# trying to uninstall the apt-managed numpy (which fails: no RECORD file), and
+# pinning numpy<2 preserves ABI compatibility with ROS packages (cv_bridge, etc.)
+RUN pip install --no-cache-dir --break-system-packages --ignore-installed \
+    "numpy<2" \
     opencv-python \
-    mediapipe \
-    numpy \
+    "mediapipe==0.10.21" \
     scipy \
     pyyaml
 

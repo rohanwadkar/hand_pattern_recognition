@@ -8,7 +8,7 @@
   <link name="pedestal_link">
     <visual>
       <geometry>
-        <cylinder radius="0.1" length="0.75"/>
+        <cylinder radius="0.1" length="0.90"/>
       </geometry>
       <material name="dark_gray">
         <color rgba="0.2 0.2 0.2 1.0"/>
@@ -16,7 +16,7 @@
     </visual>
     <collision>
       <geometry>
-        <cylinder radius="0.1" length="0.75"/>
+        <cylinder radius="0.1" length="0.90"/>
       </geometry>
     </collision>
     <inertial>
@@ -29,7 +29,7 @@
   <joint name="world_to_pedestal" type="fixed">
     <parent link="world"/>
     <child link="pedestal_link"/>
-    <origin xyz="0.0 -0.5 0.375" rpy="0 0 0"/>
+    <origin xyz="0.0 -0.60 0.45" rpy="0 0 0"/>
   </joint>
 
   <!-- Include standard UR5e URDF xacro -->
@@ -44,7 +44,7 @@
     physical_parameters_file="$(find ur_description)/config/ur5e/physical_parameters.yaml"
     visual_parameters_file="$(find ur_description)/config/ur5e/visual_parameters.yaml"
   >
-    <origin xyz="0 0 0.375" rpy="0 0 1.5708"/>
+    <origin xyz="0 0 0.45" rpy="0 0 1.5708"/>
   </xacro:ur_robot>
 
   <!-- Parallel Jaw Gripper Description -->
@@ -208,20 +208,63 @@
     </plugin>
   </gazebo>
 
-  <!-- ros2_control interface definition for Gripper -->
-  <ros2_control name="GripperControl" type="system">
+  <!-- One Gazebo hardware system must expose every joint used by controllers. -->
+  <ros2_control name="GazeboSystem" type="system">
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
+    <joint name="shoulder_pan_joint">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="shoulder_lift_joint">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">-1.5708</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="elbow_joint">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">1.5708</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="wrist_1_joint">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">-1.5708</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="wrist_2_joint">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">-1.5708</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="wrist_3_joint">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
     <joint name="left_finger_joint">
       <command_interface name="position"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="right_finger_joint">
-      <command_interface name="position"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
+      <param name="mimic">left_finger_joint</param>
+      <param name="multiplier">1.0</param>
     </joint>
   </ros2_control>
 

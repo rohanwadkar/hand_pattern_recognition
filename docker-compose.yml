@@ -6,17 +6,24 @@ services:
     container_name: ros2_ur5e_container
     network_mode: host
     ipc: host
+    gpus: all
     environment:
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
+      - XDG_RUNTIME_DIR=/tmp/runtime-ros
+      # Match the container GLX libraries to the NVIDIA-backed host X server.
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - QT_XCB_GL_INTEGRATION=xcb_glx
       - ROS_DOMAIN_ID=0
     volumes:
       - .:/ros2_ws/src/hand_pattern_recognition
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - /dev/dri:/dev/dri:rw
     devices:
       - /dev/video0:/dev/video0
-    privileged: true
+    # GPU access is scoped through the NVIDIA runtime; broad privilege is not
+    # required.
+    privileged: false
     stdin_open: true
     tty: true
-    command: bash -c "colcon build && source install/setup.bash && ros2 launch ur5e_desk_bringup bringup.launch.py"
+    command: bash -c "mkdir -p /tmp/runtime-ros && chmod 700 /tmp/runtime-ros && colcon build --symlink-install && source install/setup.bash && ros2 launch ur5e_desk_bringup bringup.launch.py"

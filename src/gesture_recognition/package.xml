@@ -3,7 +3,7 @@
 <package format="3">
   <name>gesture_recognition</name>
   <version>1.0.0</version>
-  <description>MediaPipe & OpenCV gesture recognition node for ROS 2</description>
+  <description>MediaPipe &amp; OpenCV gesture recognition node for ROS 2</description>
   <maintainer email="user@todo.todo">ROS Developer</maintainer>
   <license>Apache-2.0</license>
 
